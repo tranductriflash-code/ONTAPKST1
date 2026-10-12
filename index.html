@@ -95,6 +95,14 @@
                             <input type="text" id="auth-name" required placeholder="Ví dụ: Trần Đức Trí" 
                                 class="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-semibold text-slate-800 text-sm transition-all bg-slate-50/50">
                         </div>
+                        <div>
+    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Nhập Mã PIN cá nhân:</label>
+    <div class="relative">
+        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input type="password" id="auth-pin" required placeholder="Nhập 6 số mã PIN" 
+            class="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-semibold text-slate-800 text-sm transition-all bg-slate-50/50">
+    </div>
+</div>
                     </div>
 
                     <!-- ERROR ALERT -->
@@ -313,7 +321,7 @@
                             <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                                 <tr>
                                     <th class="p-3">STT</th>
-                                    <th class="p-3">Câu hỏi (Vi sinh / Ký sinh trùng)</th>
+                                    <th class="p-3">Câu hỏi Ký sinh trùng</th>
                                     <th class="p-3">Câu trả lời của bạn</th>
                                     <th class="p-3">Đáp án đúng</th>
                                 </tr>
@@ -347,13 +355,12 @@
     </footer>
 
     <script>
-        // DANH SÁCH TÊN ĐƯỢC PHÉP TRUY CẬP (Thêm bớt tên tại đây)
-        const allowedNames = [
-            "Trần Đức Trí",
-            "Nguyễn Văn A",
-            "Lê Thị B",
-            "Admin"
-        ];
+        // DANH SÁCH CẤP PHÉP (Gồm Tên + Mã PIN riêng)
+const allowedUsers = [
+    { name: "Trần Đức Trí", pin: "123456" },
+    { name: "Nguyễn Văn A", pin: "888999" },
+    { name: "Lê Thị B", pin: "654321" }
+];
 
         // MASTER QUESTION BANK WITH CON1.JPG -> CON35.JPG
         const masterQuestions = [
@@ -410,29 +417,30 @@
             return str.toLowerCase().trim().replace(/\s+/g, ' ');
         }
 
-        function handleNameAuth(e) {
-            e.preventDefault();
-            const inputName = document.getElementById('auth-name').value;
-            const normalizedInput = normalizeStr(inputName);
-            const authError = document.getElementById('auth-error');
-            const authErrorText = document.getElementById('auth-error-text');
+      function handleNameAuth(e) {
+    e.preventDefault();
+    const inputName = normalizeStr(document.getElementById('auth-name').value);
+    const inputPin = document.getElementById('auth-pin').value.trim();
+    const authError = document.getElementById('auth-error');
+    const authErrorText = document.getElementById('auth-error-text');
 
-            const matchedName = allowedNames.find(name => normalizeStr(name) === normalizedInput);
+    // KIỂM TRA KHỚP CẢ TÊN VÀ MÃ PIN
+    const match = allowedUsers.find(u => normalizeStr(u.name) === inputName && u.pin === inputPin);
 
-            if (matchedName) {
-                authError.classList.add('hidden');
-                currentUserName = matchedName;
-                
-                document.getElementById('user-name-display').textContent = currentUserName;
-                document.getElementById('header-user-info').classList.remove('hidden');
+    if (match) {
+        authError.classList.add('hidden');
+        currentUserName = match.name;
+        
+        document.getElementById('user-name-display').textContent = currentUserName;
+        document.getElementById('header-user-info').classList.remove('hidden');
 
-                document.getElementById('view-auth').classList.add('hidden');
-                document.getElementById('view-mode-select').classList.remove('hidden');
-            } else {
-                authErrorText.textContent = "Tên này không có quyền truy cập hệ thống. Vui lòng kiểm tra lại!";
-                authError.classList.remove('hidden');
-            }
-        }
+        document.getElementById('view-auth').classList.add('hidden');
+        document.getElementById('view-mode-select').classList.remove('hidden');
+    } else {
+        authErrorText.textContent = "Họ tên hoặc Mã PIN không chính xác. Vui lòng thử lại!";
+        authError.classList.remove('hidden');
+    }
+}
 
         function goHomeIfLoggedIn() {
             if (currentUserName) {
