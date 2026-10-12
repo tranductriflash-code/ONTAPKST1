@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÔN TẬP KST- TRẦN ĐỨC TRÍ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#035483',
+                            800: '#075985',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        .glow-success {
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.25);
+        }
+        .glow-error {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.25);
+        }
+        .medical-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 bg-slate-50">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHomeIfLoggedIn()">
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                        KST
+                    </h1>
+                    <p class="text-xs font-semibold text-sky-600 flex items-center gap-1">  
+                    </p>
+                </div>
+            </div>
+
+            <!-- USER SESSION INFO (WHEN LOGGED IN) -->
+            <div id="header-user-info" class="hidden flex items-center gap-3 bg-slate-100 p-1.5 px-3 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                    <i class="fa-solid fa-circle-user text-sky-600 text-base"></i>
+                    <span id="user-name-display">Người dùng</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <section id="view-auth" class="fade-in max-w-md mx-auto my-8">
+            <div class="medical-card rounded-2xl p-8 bg-white">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-900">XÁC THỰC TRUY CẬP</h2>
+                    <p class="text-xs font-semibold text-slate-500 mt-1">ÔN TẬP KST</p>
+                </div>
+
+                <form onsubmit="handleNameAuth(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Nhập Họ và Tên của bạn:</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="auth-name" required placeholder="Ví dụ: Trần Đức Trí" 
+                                class="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-semibold text-slate-800 text-sm transition-all bg-slate-50/50">
+                        </div>
+                    </div>
+
+                    <!-- ERROR ALERT -->
+                    <div id="auth-error" class="hidden p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-xs font-semibold flex items-start gap-2.5">
+                        <i class="fa-solid fa-circle-exclamation text-base text-rose-500 mt-0.5"></i>
+                        <span id="auth-error-text">Tên này không nằm trong danh sách được phép truy cập.</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-bold rounded-xl shadow-md shadow-sky-200 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Bắt đầu ôn tập
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="view-mode-select" class="hidden fade-in max-w-4xl mx-auto my-6">
+            <div class="text-center mb-8">
+                <span class="px-3 py-1 bg-sky-100 text-sky-800 font-bold rounded-full text-xs border border-sky-200">
+                    HELLO
+                </span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-3">Chọn Chế Độ Học Tập</h2>
+                <p class="text-sm font-semibold text-slate-500 mt-1">Vui lòng chọn hình thức ôn tập</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- PRACTICE MODE CARD -->
+                <div class="medical-card rounded-2xl p-6 hover:border-sky-400 transition-all cursor-pointer group flex flex-col justify-between" onclick="startApp('practice')">
+                    <div>
+                        <div class="w-14 h-14 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-sky-600 transition-colors">Luyện Tập</h3>
+                        <p class="text-xs font-semibold text-slate-500 mt-2 leading-relaxed">
+                            Ôn tập toàn bộ 35 câu hỏi. Không giới hạn thời gian.
+                        </p>
+                        <ul class="mt-4 space-y-2 text-xs font-bold text-slate-600">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Ngân hàng đầy đủ 35 câu</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Nhập câu trả lời & kiểm tra tức thì</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hiện gợi ý khi sai quá 3 lần</li>
+                        </ul>
+                    </div>
+                    <button class="mt-6 w-full py-3 bg-teal-600 group-hover:bg-teal-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-play"></i> Bắt đầu Luyện tập
+                    </button>
+                </div>
+
+                <!-- EXAM MODE CARD -->
+                <div class="medical-card rounded-2xl p-6 hover:border-sky-400 transition-all cursor-pointer group flex flex-col justify-between" onclick="startApp('exam')">
+                    <div>
+                        <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-slate-800 group-hover:text-sky-600 transition-colors">Thi Thử</h3>
+                        <p class="text-xs font-semibold text-slate-500 mt-2 leading-relaxed">
+                            Mô phỏng thi.
+                        </p>
+                        <ul class="mt-4 space-y-2 text-xs font-bold text-slate-600">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-500"></i> 25 câu hỏi</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-500"></i> Giới hạn 30 giây / câu hỏi</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-500"></i> Tổng kết điểm & danh sách sai chi tiết</li>
+                        </ul>
+                    </div>
+                    <button class="mt-6 w-full py-3 bg-amber-600 group-hover:bg-amber-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-bolt"></i> Bắt đầu Thi thử
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-workspace" class="hidden fade-in space-y-6">
+
+            <!-- BACK TO MODE SELECTOR BAR -->
+            <div class="flex justify-between items-center bg-white p-3 px-4 rounded-xl border border-slate-200 shadow-sm">
+                <button onclick="backToModeSelect()" class="text-xs font-bold text-slate-600 hover:text-sky-600 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-chevron-left"></i> Đổi chế độ học tập
+                </button>
+                <span id="mode-badge" class="px-3 py-1 bg-teal-100 text-teal-800 font-semibold rounded-lg text-xs">
+                    Chế độ: Luyện tập
+                </span>
+            </div>
+
+            <!-- STATUS BAR -->
+            <div id="status-bar" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span id="question-badge" class="px-3 py-1 bg-sky-100 text-sky-700 font-bold rounded-lg text-sm">
+                        Câu <span id="current-index">1</span> / <span id="total-count">35</span>
+                    </span>
+                </div>
+
+                <!-- TIMER (EXAM MODE) -->
+                <div id="timer-box" class="hidden flex items-center space-x-2 bg-amber-50 text-amber-800 px-4 py-1.5 rounded-xl border border-amber-200 font-mono font-bold">
+                    <i class="fa-solid fa-clock text-amber-600 animate-pulse"></i>
+                    <span id="timer-text" class="text-lg">30</span> s
+                </div>
+
+                <!-- PRACTICE PROGRESS STATS -->
+                <div id="practice-stats" class="flex items-center gap-4 text-xs font-bold text-slate-500">
+                    <span class="text-emerald-600"><i class="fa-solid fa-circle-check"></i> Đã đúng: <span id="stat-correct">0</span></span>
+                    <span class="text-rose-500"><i class="fa-solid fa-circle-xmark"></i> Làm sai: <span id="stat-wrong">0</span></span>
+                </div>
+            </div>
+
+            <!-- WORKSPACE GRID -->
+            <div id="workspace" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- LEFT CONTAINER: VISUAL DISPLAY -->
+                <div class="lg:col-span-6 flex flex-col">
+                    <div class="medical-card rounded-2xl p-4 flex-grow flex flex-col items-center justify-center relative min-h-[420px] bg-slate-900 text-white overflow-hidden">
+                        <div class="absolute top-3 left-3 bg-slate-800/80 backdrop-blur-md border border-slate-700 px-3 py-1 rounded-full text-xs font-medium text-slate-300 z-10">
+                            <i class="fa-solid fa-eye text-sky-400 mr-1"></i> Lam kính hiển vi
+                        </div>
+                        
+                        <!-- Image / SVG Container -->
+                        <div id="svg-container" class="w-full h-96 flex items-center justify-center p-2">
+                            <!-- Dynamically inserted -->
+                        </div>
+
+                        <div id="hint-display" class="w-full mt-2 p-2.5 bg-slate-800/90 border border-slate-700 rounded-xl text-center text-xs font-semibold text-amber-300 hidden">
+                            <i class="fa-regular fa-lightbulb text-amber-400 mr-1"></i> Gợi ý: <span id="hint-text"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT CONTAINER: INPUT & CONTROLS -->
+                <div class="lg:col-span-6 flex flex-col justify-between">
+                    <div class="medical-card rounded-2xl p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-pen-to-square text-sky-600"></i>ĐIỀN VÀO KHUNG BÊN DƯỚI
+                                </h2>
+                                <button id="btn-hint" onclick="toggleHint()" class="p-2 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-xl border border-amber-200 text-sm font-semibold transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Gợi ý
+                                </button>
+                            </div>
+
+                            <!-- INPUT FORM -->
+                            <form id="answer-form" onsubmit="handleCheck(event)" class="space-y-4">
+                                <div class="relative">
+                                    <input type="text" id="user-answer" placeholder="NHẬP VÀO ĐÁP ÁN ĐÂY" autocomplete="off" 
+                                        class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-semibold text-slate-800 text-base transition-all bg-slate-50/50">
+                                </div>
+
+                                <!-- FEEDBACK ALERT -->
+                                <div id="feedback-box" class="hidden p-4 rounded-xl border text-sm font-medium transition-all">
+                                    <div id="feedback-content" class="flex items-start gap-3"></div>
+                                </div>
+
+                                <button type="submit" id="btn-submit" class="w-full py-3.5 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-bold rounded-xl shadow-md shadow-sky-200 transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Gửi đáp án
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- NAVIGATION CONTROLS -->
+                        <div id="nav-controls" class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                            <button id="btn-prev" onclick="prevQuestion()" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-left"></i> Câu trước
+                            </button>
+                            <button id="btn-next" onclick="nextQuestion()" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                                Câu sau <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- EXAM SUBMIT BUTTON -->
+                        <div id="exam-finish-box" class="mt-4 hidden">
+                            <button onclick="finishExam()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md shadow-emerald-200 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-check-double"></i> Nộp bài thi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK QUESTION SELECTOR (PRACTICE MODE ONLY) -->
+            <div id="quick-selector-card" class="medical-card rounded-2xl p-5">
+                <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-grip text-sky-600"></i> Danh sách câu hỏi:
+                </h3>
+                <div id="question-grid" class="flex flex-wrap gap-2">
+                    <!-- Buttons rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- EXAM RESULT MODAL/PANEL -->
+            <div id="exam-results" class="hidden medical-card rounded-2xl p-6 bg-white border-2 border-sky-100">
+                <div class="text-center pb-6 border-b border-slate-200">
+                    <div class="inline-flex p-3 rounded-full bg-sky-100 text-sky-600 mb-2">
+                        <i class="fa-solid fa-square-poll-vertical text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">KẾT QUẢ THI THỬ</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 max-w-2xl mx-auto">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Tổng điểm</span>
+                            <span id="res-score" class="text-3xl font-extrabold text-sky-600">0 / 25</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Tỷ lệ chính xác</span>
+                            <span id="res-percentage" class="text-3xl font-extrabold text-emerald-600">0%</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="block text-xs font-bold text-slate-400 uppercase">Thời gian làm</span>
+                            <span id="res-time" class="text-3xl font-extrabold text-indigo-600">0s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETAILED REVIEW TABLE -->
+                <div class="mt-6">
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-sky-600"></i> Chi tiết các câu làm sai hoặc bỏ trống:
+                    </h3>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">STT</th>
+                                    <th class="p-3">Câu hỏi (Vi sinh / Ký sinh trùng)</th>
+                                    <th class="p-3">Câu trả lời của bạn</th>
+                                    <th class="p-3">Đáp án đúng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exam-review-body" class="divide-y divide-slate-200 bg-white">
+                                <!-- Review rows dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button onclick="startApp('exam')" class="px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl shadow-md shadow-sky-200 transition-all">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Thi lại đề mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-sm font-bold text-slate-700">
+               Ôn tập Ký sinh trùng 
+            </p>
+            <p class="text-xs font-semibold text-slate-500 mt-1">
+                Trần Đức Trí YK1 &copy; 2026. All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // DANH SÁCH TÊN ĐƯỢC PHÉP TRUY CẬP (Thêm bớt tên tại đây)
+        const allowedNames = [
+            "Trần Đức Trí",
+            "Nguyễn Văn A",
+            "Lê Thị B",
+            "Admin"
+        ];
+
+        // MASTER QUESTION BANK WITH CON1.JPG -> CON35.JPG
+        const masterQuestions = [
+            { id: 1, name: "Histoplasma capsulatum", type: "fungus", image: "con1.jpg" },
+            { id: 2, name: "Alternaria sp", type: "fungus", image: "con2.jpg" },
+            { id: 3, name: "Fasciola gigantica adult", type: "helm", image: "con3.jpg" },
+            { id: 4, name: "Aspergillus fumigatus", type: "fungus", image: "con4.jpg" },
+            { id: 5, name: "Penicillium sp", type: "fungus", image: "con5.jpg" },
+            { id: 6, name: "Candida sp", type: "fungus", image: "con6.jpg" },
+            { id: 7, name: "Nigrospora sp", type: "fungus", image: "con7.jpg" },
+            { id: 8, name: "Rhipicephalus sanguineus adult", type: "arthropod", image: "con8.jpg" },
+            { id: 9, name: "Pediculus capitis adult", type: "arthropod", image: "con9.jpg" },
+            { id: 10, name: "Mucor sp", type: "fungus", image: "con10.jpg" },
+            { id: 11, name: "Fusarium sp", type: "fungus", image: "con11.jpg" },
+            { id: 12, name: "Phthirius inguinalis adult", type: "arthropod", image: "con12.jpg" },
+            { id: 13, name: "Plasmodium vivax gametocytes", type: "protozoa", image: "con13.jpg" },
+            { id: 14, name: "Plasmodium falciparum trophozoites", type: "protozoa", image: "con14.jpg" },
+            { id: 15, name: "Plasmodium vivax trophozoites", type: "protozoa", image: "con15.jpg" },
+            { id: 16, name: "Plasmodium falciparum gametocytes", type: "protozoa", image: "con16.jpg" },
+            { id: 17, name: "Trichuris trichiura ova", type: "helm", image: "con17.jpg" },
+            { id: 18, name: "Enterobius vermicularis adult", type: "helm", image: "con18.jpg" },
+            { id: 19, name: "Taenia sp ova", type: "helm", image: "con19.jpg" },
+            { id: 20, name: "Plasmodium vivax schizonts", type: "protozoa", image: "con20.jpg" },
+            { id: 21, name: "Trứng giun móc", type: "helm", image: "con21.jpg" },
+            { id: 22, name: "Giardia lamblia trophozoites", type: "protozoa", image: "con22.jpg" },
+            { id: 23, name: "Entamoeba coli cyst", type: "protozoa", image: "con23.jpg" },
+            { id: 24, name: "Entamoeba histolytica cyst", type: "protozoa", image: "con24.jpg" },
+            { id: 25, name: "Strongyloides stercoralis larva I", type: "helm", image: "con25.jpg" },
+            { id: 26, name: "Ascaris lumbricoides ova", type: "helm", image: "con26.jpg" },
+            { id: 27, name: "Clonorchis sinensis ova", type: "helm", image: "con27.jpg" },
+            { id: 28, name: "Culex sp larva", type: "arthropod", image: "con28.jpg" },
+            { id: 29, name: "Ctenocephalides canis adult", type: "arthropod", image: "con29.jpg" },
+            { id: 30, name: "Xenopsylla cheopis adult", type: "arthropod", image: "con30.jpg" },
+            { id: 31, name: "Entamoeba histolytica trophozoites", type: "protozoa", image: "con31.jpg" },
+            { id: 32, name: "Necator americanus adult", type: "helm", image: "con32.jpg" },
+            { id: 33, name: "Entamoeba coli trophozoites", type: "protozoa", image: "con33.jpg" },
+            { id: 34, name: "Fasciolopsis buski ova", type: "helm", image: "con34.jpg" },
+            { id: 35, name: "Giardia lamblia cyst", type: "protozoa", image: "con35.jpg" }
+        ];
+
+        // GLOBAL APPLICATION STATE
+        let currentUserName = null;
+        let currentMode = 'practice'; // 'practice' or 'exam'
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let practiceAttempts = 0;
+        let practiceStats = { correct: 0, wrong: 0 };
+        let userExamAnswers = {};
+        let examTimer = null;
+        let timeLeft = 30;
+        let isHintVisible = false;
+
+        function normalizeStr(str) {
+            return str.toLowerCase().trim().replace(/\s+/g, ' ');
+        }
+
+        function handleNameAuth(e) {
+            e.preventDefault();
+            const inputName = document.getElementById('auth-name').value;
+            const normalizedInput = normalizeStr(inputName);
+            const authError = document.getElementById('auth-error');
+            const authErrorText = document.getElementById('auth-error-text');
+
+            const matchedName = allowedNames.find(name => normalizeStr(name) === normalizedInput);
+
+            if (matchedName) {
+                authError.classList.add('hidden');
+                currentUserName = matchedName;
+                
+                document.getElementById('user-name-display').textContent = currentUserName;
+                document.getElementById('header-user-info').classList.remove('hidden');
+
+                document.getElementById('view-auth').classList.add('hidden');
+                document.getElementById('view-mode-select').classList.remove('hidden');
+            } else {
+                authErrorText.textContent = "Tên này không có quyền truy cập hệ thống. Vui lòng kiểm tra lại!";
+                authError.classList.remove('hidden');
+            }
+        }
+
+        function goHomeIfLoggedIn() {
+            if (currentUserName) {
+                backToModeSelect();
+            }
+        }
+
+        function backToModeSelect() {
+            clearInterval(examTimer);
+            document.getElementById('view-workspace').classList.add('hidden');
+            document.getElementById('view-mode-select').classList.remove('hidden');
+        }
+
+        function startApp(mode) {
+            currentMode = mode;
+            clearInterval(examTimer);
+
+            document.getElementById('view-mode-select').classList.add('hidden');
+            document.getElementById('view-workspace').classList.remove('hidden');
+
+            const timerBox = document.getElementById('timer-box');
+            const practiceStatsBox = document.getElementById('practice-stats');
+            const quickSelector = document.getElementById('quick-selector-card');
+            const examResults = document.getElementById('exam-results');
+            const workspace = document.getElementById('workspace');
+            const modeBadge = document.getElementById('mode-badge');
+            const examFinishBox = document.getElementById('exam-finish-box');
+
+            examResults.classList.add('hidden');
+            workspace.classList.remove('hidden');
+
+            if (mode === 'practice') {
+                timerBox.classList.add('hidden');
+                practiceStatsBox.classList.remove('hidden');
+                quickSelector.classList.remove('hidden');
+                examFinishBox.classList.add('hidden');
+                modeBadge.textContent = "Chế độ: Luyện tập";
+                modeBadge.className = "px-3 py-1 bg-teal-100 text-teal-800 font-semibold rounded-lg text-xs";
+
+                initPracticeMode();
+            } else {
+                timerBox.classList.remove('hidden');
+                practiceStatsBox.classList.add('hidden');
+                quickSelector.classList.add('hidden');
+                examFinishBox.classList.remove('hidden');
+                modeBadge.textContent = "Chế độ: Thi thử";
+                modeBadge.className = "px-3 py-1 bg-amber-100 text-amber-800 font-semibold rounded-lg text-xs";
+
+                initExamMode();
+            }
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initPracticeMode() {
+            activeQuestions = shuffleArray(masterQuestions);
+            currentIndex = 0;
+            practiceAttempts = 0;
+            practiceStats = { correct: 0, wrong: 0 };
+            document.getElementById('stat-correct').textContent = "0";
+            document.getElementById('stat-wrong').textContent = "0";
+            document.getElementById('total-count').textContent = activeQuestions.length;
+
+            renderQuickSelector();
+            loadQuestion();
+        }
+
+        function initExamMode() {
+            activeQuestions = shuffleArray(masterQuestions).slice(0, 25);
+            currentIndex = 0;
+            userExamAnswers = {};
+            document.getElementById('total-count').textContent = activeQuestions.length;
+
+            loadQuestion();
+            startExamTimer();
+        }
+
+        function generateMicroscopeSVG(item) {
+            const name = item.name.toLowerCase();
+            let content = '';
+
+            if (name.includes('plasmodium')) {
+                content = `
+                    <circle cx="150" cy="100" r="65" fill="#fecdd3" stroke="#f43f5e" stroke-width="4"/>
+                    ${name.includes('gametocyte') && name.includes('falciparum') ? 
+                        `<path d="M 110,100 Q 150,60 190,100 Q 150,140 110,100 Z" fill="#9333ea" stroke="#581c87" stroke-width="3"/>` :
+                        `<circle cx="160" cy="80" r="16" fill="none" stroke="#9333ea" stroke-width="4"/>
+                         <circle cx="170" cy="72" r="5" fill="#dc2626"/>`
+                    }
+                    <circle cx="90" cy="70" r="3" fill="#fda4af"/>
+                    <circle cx="200" cy="130" r="4" fill="#fda4af"/>
+                `;
+            } else if (name.includes('ova') || name.includes('trứng')) {
+                content = `
+                    <ellipse cx="150" cy="100" rx="75" ry="50" fill="#fef08a" stroke="#d97706" stroke-width="6"/>
+                    ${name.includes('trichiura') ? 
+                        `<circle cx="75" cy="100" r="12" fill="#b45309"/>
+                         <circle cx="225" cy="100" r="12" fill="#b45309"/>` : ''
+                    }
+                    ${name.includes('ascaris') ? 
+                        `<ellipse cx="150" cy="100" rx="65" ry="40" fill="#f59e0b" stroke="#78350f" stroke-width="8" stroke-dasharray="6,4"/>` : ''
+                    }
+                    <ellipse cx="150" cy="100" rx="45" ry="28" fill="#d97706" opacity="0.6"/>
+                `;
+            } else if (name.includes('fungus') || item.type === 'fungus') {
+                content = `
+                    <path d="M 150,160 L 150,90 M 150,90 L 120,60 M 150,90 L 180,60 M 150,90 L 150,50" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="120" cy="55" r="8" fill="#0284c7"/>
+                    <circle cx="180" cy="55" r="8" fill="#0284c7"/>
+                    <circle cx="150" cy="45" r="8" fill="#0284c7"/>
+                    <circle cx="110" cy="45" r="6" fill="#38bdf8"/>
+                    <circle cx="190" cy="45" r="6" fill="#38bdf8"/>
+                `;
+            } else if (name.includes('larva') || name.includes('ấu trùng') || item.type === 'helm') {
+                content = `
+                    <path d="M 70,120 Q 110,60 150,110 T 230,80" fill="none" stroke="#4ade80" stroke-width="14" stroke-linecap="round"/>
+                    <path d="M 70,120 Q 110,60 150,110 T 230,80" fill="none" stroke="#15803d" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="72" cy="120" r="4" fill="#052e16"/>
+                `;
+            } else {
+                content = `
+                    <ellipse cx="150" cy="105" rx="45" ry="35" fill="#f97316" stroke="#c2410c" stroke-width="4"/>
+                    <circle cx="150" cy="60" r="20" fill="#ea580c"/>
+                    <path d="M 110,80 L 70,70 M 110,100 L 60,100 M 110,120 L 70,130" stroke="#c2410c" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 190,80 L 230,70 M 190,100 L 240,100 M 190,120 L 230,130" stroke="#c2410c" stroke-width="4" stroke-linecap="round"/>
+                `;
+            }
+
+            return `
+                <svg viewBox="0 0 300 200" class="w-full h-full max-h-80 filter drop-shadow-md">
+                    <circle cx="150" cy="100" r="95" fill="#0f172a" stroke="#334155" stroke-width="4"/>
+                    <circle cx="150" cy="100" r="90" fill="#1e293b"/>
+                    <line x1="60" y1="100" x2="240" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="150" y1="10" x2="150" y2="190" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+                    ${content}
+                </svg>
+            `;
+        }
+
+        function renderQuickSelector() {
+            const container = document.getElementById('question-grid');
+            container.innerHTML = '';
+            activeQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = `qbtn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = `w-9 h-9 rounded-lg font-bold text-xs transition-all border ${
+                    idx === currentIndex 
+                    ? 'bg-sky-600 text-white border-sky-600' 
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                }`;
+                btn.textContent = idx + 1;
+                container.appendChild(btn);
+            });
+        }
+
+        function loadQuestion() {
+            practiceAttempts = 0;
+            isHintVisible = false;
+            document.getElementById('hint-display').classList.add('hidden');
+
+            const item = activeQuestions[currentIndex];
+            document.getElementById('current-index').textContent = currentIndex + 1;
+
+            const svgContainer = document.getElementById('svg-container');
+            if (item.image) {
+                svgContainer.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="h-full w-full object-contain rounded-lg shadow-md border border-slate-700">
+                `;
+            } else {
+                svgContainer.innerHTML = generateMicroscopeSVG(item);
+            }
+
+            const input = document.getElementById('user-answer');
+            const feedback = document.getElementById('feedback-box');
+            input.value = currentMode === 'exam' ? (userExamAnswers[currentIndex] || '') : '';
+            input.className = "w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-semibold text-slate-800 text-base transition-all bg-slate-50/50";
+            input.disabled = false;
+            feedback.classList.add('hidden');
+
+            const words = item.name.split(' ');
+            const hintText = words.map(w => w.charAt(0) + '_'.repeat(w.length - 1)).join(' ');
+            document.getElementById('hint-text').textContent = hintText;
+
+            if (currentMode === 'practice') {
+                activeQuestions.forEach((_, idx) => {
+                    const btn = document.getElementById(`qbtn-${idx}`);
+                    if (btn) {
+                        if (idx === currentIndex) {
+                            btn.classList.add('ring-2', 'ring-sky-500', 'ring-offset-1');
+                        } else {
+                            btn.classList.remove('ring-2', 'ring-sky-500', 'ring-offset-1');
+                        }
+                    }
+                });
+            }
+
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            if (currentMode === 'exam') {
+                btnPrev.disabled = true;
+                btnNext.disabled = true;
+                btnPrev.classList.add('opacity-50', 'cursor-not-allowed');
+                btnNext.classList.add('opacity-50', 'cursor-not-allowed');
+                resetTimer();
+            } else {
+                btnPrev.disabled = false;
+                btnNext.disabled = false;
+                btnPrev.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnNext.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function startExamTimer() {
+            clearInterval(examTimer);
+            timeLeft = 30;
+            document.getElementById('timer-text').textContent = timeLeft;
+
+            examTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-text').textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    saveExamAnswer();
+                    if (currentIndex < activeQuestions.length - 1) {
+                        currentIndex++;
+                        loadQuestion();
+                    } else {
+                        clearInterval(examTimer);
+                        finishExam();
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            timeLeft = 30;
+            document.getElementById('timer-text').textContent = timeLeft;
+        }
+
+        function saveExamAnswer() {
+            const inputVal = document.getElementById('user-answer').value.trim();
+            userExamAnswers[currentIndex] = inputVal;
+        }
+
+        function toggleHint() {
+            isHintVisible = !isHintVisible;
+            const hintBox = document.getElementById('hint-display');
+            if (isHintVisible) {
+                hintBox.classList.remove('hidden');
+            } else {
+                hintBox.classList.add('hidden');
+            }
+        }
+
+        function handleCheck(e) {
+            e.preventDefault();
+            const input = document.getElementById('user-answer');
+            const feedback = document.getElementById('feedback-box');
+            const feedbackContent = document.getElementById('feedback-content');
+            const userVal = normalizeStr(input.value);
+            const target = activeQuestions[currentIndex];
+            const correctVal = normalizeStr(target.name);
+
+            if (currentMode === 'exam') {
+                saveExamAnswer();
+                if (currentIndex < activeQuestions.length - 1) {
+                    currentIndex++;
+                    loadQuestion();
+                } else {
+                    finishExam();
+                }
+                return;
+            }
+
+            // PRACTICE MODE CHECK
+            if (userVal === correctVal) {
+                input.className = "w-full px-4 py-3.5 rounded-xl border-2 border-emerald-500 focus:outline-none font-semibold text-slate-800 text-base bg-emerald-50/30 glow-success";
+                feedback.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold";
+                feedbackContent.innerHTML = `
+                    <i class="fa-solid fa-circle-check text-xl text-emerald-600 mt-0.5"></i>
+                    <div>
+                        <p class="font-bold">Chính xác!</p>
+                    </div>
+                `;
+                feedback.classList.remove('hidden');
+
+                practiceStats.correct++;
+                document.getElementById('stat-correct').textContent = practiceStats.correct;
+                const qBtn = document.getElementById(`qbtn-${currentIndex}`);
+                if (qBtn) {
+                    qBtn.className = "w-9 h-9 rounded-lg font-bold text-xs bg-emerald-500 text-white border-emerald-600";
+                }
+            } else {
+                practiceAttempts++;
+                practiceStats.wrong++;
+                document.getElementById('stat-wrong').textContent = practiceStats.wrong;
+
+                input.className = "w-full px-4 py-3.5 rounded-xl border-2 border-rose-500 focus:outline-none font-semibold text-slate-800 text-base bg-rose-50/30 glow-error";
+                feedback.className = "p-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-800 font-semibold";
+
+                if (practiceAttempts >= 3) {
+                    feedbackContent.innerHTML = `
+                        <i class="fa-solid fa-triangle-exclamation text-xl text-amber-600 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold">Bạn đã thử sai 3 lần!</p>
+                            <p class="text-xs font-semibold mt-1">Đáp án đúng là: <span class="text-rose-700 underline font-extrabold">${target.name}</span></p>
+                            <p class="text-xs text-slate-600 mt-0.5">Hãy nhập lại đúng đáp án trên để hoàn thành câu hỏi này.</p>
+                        </div>
+                    `;
+                } else {
+                    feedbackContent.innerHTML = `
+                        <i class="fa-solid fa-circle-xmark text-xl text-rose-600 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold">Chưa chính xác! (Lần sai: ${practiceAttempts}/3)</p>
+                            <p class="text-xs font-normal mt-0.5">Hãy kiểm tra lại chính tả hoặc bấm nút Gợi ý.</p>
+                        </div>
+                    `;
+                }
+                feedback.classList.remove('hidden');
+
+                const qBtn = document.getElementById(`qbtn-${currentIndex}`);
+                if (qBtn) {
+                    qBtn.className = "w-9 h-9 rounded-lg font-bold text-xs bg-rose-500 text-white border-rose-600";
+                }
+            }
+        }
+
+        function prevQuestion() {
+            if (currentMode === 'practice' && currentIndex > 0) {
+                currentIndex--;
+                loadQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentMode === 'practice' && currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            if (currentMode === 'practice') {
+                currentIndex = index;
+                loadQuestion();
+            }
+        }
+
+        function finishExam() {
+            clearInterval(examTimer);
+            saveExamAnswer();
+
+            let score = 0;
+            const reviewBody = document.getElementById('exam-review-body');
+            reviewBody.innerHTML = '';
+
+            activeQuestions.forEach((q, idx) => {
+                const userAns = (userExamAnswers[idx] || '').trim();
+                const isCorrect = normalizeStr(userAns) === normalizeStr(q.name);
+
+                if (isCorrect) {
+                    score++;
+                } else {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition-all";
+                    tr.innerHTML = `
+                        <td class="p-3 font-bold text-slate-500">${idx + 1}</td>
+                        <td class="p-3 font-semibold text-slate-800">${q.name}</td>
+                        <td class="p-3 font-semibold ${userAns ? 'text-rose-600' : 'text-slate-400 italic'}">
+                            ${userAns || 'Bỏ trống'}
+                        </td>
+                        <td class="p-3 font-bold text-emerald-600">${q.name}</td>
+                    `;
+                    reviewBody.appendChild(tr);
+                }
+            });
+
+            if (score === activeQuestions.length) {
+                reviewBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-6 text-center text-emerald-600 font-bold">
+                            <i class="fa-solid fa-trophy text-2xl mb-2 block"></i>
+                            Xuất sắc! Bạn đã trả lời đúng tất cả 25 câu hỏi!
+                        </td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('res-score').textContent = `${score} / ${activeQuestions.length}`;
+            const percentage = Math.round((score / activeQuestions.length) * 100);
+            document.getElementById('res-percentage').textContent = `${percentage}%`;
+            document.getElementById('res-time').textContent = `${25 * 30 - timeLeft}s`;
+
+            document.getElementById('workspace').classList.add('hidden');
+            document.getElementById('exam-results').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
